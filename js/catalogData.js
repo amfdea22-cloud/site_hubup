@@ -40,6 +40,7 @@ window.catalogData = {
       railId: "trilho-saas",
       rank: "TOP #1",
       title: "Anonymize",
+      siteUrl: "https://anonymizeweb.netlify.app/",
       heroTitle: "ANONYMIZE",
       heroBadge: "DESTAQUE ENTERPRISE • COMPLIANCE & LGPD",
       heroSubtitleMeta: "Top #1 em Segurança de Dados",
@@ -47,22 +48,23 @@ window.catalogData = {
       category: "Compliance & LGPD",
       status: "Disponível para Demo",
       match: "99% Match Enterprise",
-      metrics: "Precisão PII 99.4% • < 1.8s/doc • Auditoria LGPD",
+      metrics: "0 bytes residuais • SHA-256 • LGPD + LAI",
       artwork: "anonymize",
       hudLabel: "ANONYMIZE ENGINE v4.2",
       hudStatus: "PII SHIELD ATIVO",
       heroStats: [
-        { value: "99.4%", label: "Precisão na detecção de PII" },
-        { value: "< 1.8s", label: "Tempo médio por documento" },
-        { value: "100%", label: "Trilha auditável LGPD" }
+        { value: "99%", label: "Menos trabalho manual com IA" },
+        { value: "0 bytes", label: "De texto oculto residual no PDF" },
+        { value: "SHA-256", label: "Trilha criptográfica LGPD + LAI" }
       ],
       specs: [
-        { key: "FORMATOS SUPORTADOS", value: "PDF, DOCX, XLSX, CSV, JSON, Imagens (OCR)" },
-        { key: "MOTOR DE DETECÇÃO", value: "NLP Híbrido + NER Customizado + Regex" },
-        { key: "ENTIDADES PII", value: "CPF, RG, Nomes, CID, Endereços, Dados Bancários" },
-        { key: "INTEGRAÇÃO", value: "API REST, Webhooks & Portal Web" },
-        { key: "DEPLOY", value: "Cloud SaaS Dedicado ou On-Premise (Docker)" },
-        { key: "CONFORMIDADE", value: "LGPD (Lei 13.709/2018) & ISO 27001 Ready" }
+        { key: "FORMATOS SUPORTADOS", value: "PDF (Nativo/OCR), Áudio, XLSX, CSV, JSON" },
+        { key: "MOTOR DE DETECÇÃO", value: "IA + OCR Neural + Remoção Binária de Texto" },
+        { key: "AUDITORIA", value: "Trilha Criptográfica SHA-256 & 0 bytes residuais" },
+        { key: "INTEGRAÇÕES", value: "API REST, SEI, PJe, ERPs, GEDs & Edge Gateway" },
+        { key: "DEPLOY", value: "Cloud Privada BR ou On-Premise (Docker)" },
+        { key: "CONFORMIDADE", value: "LGPD (Lei 13.709/2018) & LAI (Lei 12.527/2011)" },
+        { key: "PLANOS", value: "Starter Grátis • Pro (R$ 490/mês) • Enterprise" }
       ],
       heroPitch:
         "Proteção inteligente e anonimização automatizada de documentos e dados sensíveis. Adeque sua operação à LGPD em segundos com IA, eliminando riscos de vazamento e multas sem comprometer a utilidade dos arquivos.",

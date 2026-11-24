@@ -42,6 +42,7 @@
   const modalGains = document.getElementById("modalGains");
   const modalTags = document.getElementById("modalTags");
   const modalMetrics = document.getElementById("modalMetrics");
+  const modalSiteLink = document.getElementById("modalSiteLink");
   const modalDetailPanel = document.getElementById("modalDetailPanel");
   const modalDemoPanel = document.getElementById("modalDemoPanel");
   const openDemoFromModalBtn = document.getElementById("openDemoFromModalBtn");
@@ -58,6 +59,7 @@
   const drawerTitle = document.getElementById("drawerTitle");
   const drawerIntro = document.getElementById("drawerIntro");
   const drawerSpecsList = document.getElementById("drawerSpecsList");
+  const drawerSiteLink = document.getElementById("drawerSiteLink");
   const drawerOpenFullModal = document.getElementById("drawerOpenFullModal");
   const drawerScrollCatalog = document.getElementById("drawerScrollCatalog");
 
@@ -159,6 +161,16 @@
       )
       .join("");
     drawerOpenFullModal.textContent = `Abrir Ficha Completa — ${product.title}`;
+
+    if (drawerSiteLink) {
+      if (product.siteUrl) {
+        drawerSiteLink.href = product.siteUrl;
+        drawerSiteLink.textContent = `Acessar Site Oficial — ${product.title} ↗`;
+        drawerSiteLink.style.display = "inline-flex";
+      } else {
+        drawerSiteLink.style.display = "none";
+      }
+    }
   }
 
   function renderHeroContent(product) {
@@ -598,6 +610,16 @@
       .map((tag) => `<span class="tech-tag">${escapeHtml(tag)}</span>`)
       .join("");
 
+    if (modalSiteLink) {
+      if (product.siteUrl) {
+        modalSiteLink.href = product.siteUrl;
+        modalSiteLink.textContent = `Visitar Site Oficial ↗`;
+        modalSiteLink.style.display = "inline-flex";
+      } else {
+        modalSiteLink.style.display = "none";
+      }
+    }
+
     demoProductInput.value = product.title;
   }
 
@@ -969,4 +991,8 @@
 
   // Initialize
   renderCatalogRails();
+  const initialProduct = getProductById(activeHeroProductId);
+  if (initialProduct) {
+    renderHeroContent(initialProduct);
+  }
 })();

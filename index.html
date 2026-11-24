@@ -526,9 +526,21 @@
 
             <div class="modal-actions-bar">
               <div class="mono" style="font-size: 0.78rem; color: var(--text-muted);" id="modalMetrics"></div>
-              <button type="button" class="btn btn-primary" id="openDemoFromModalBtn">
-                Solicitar Demonstração deste Software
-              </button>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                <a
+                  href="https://anonymizeweb.netlify.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-glass"
+                  id="modalSiteLink"
+                  style="display: none;"
+                >
+                  Visitar Site Oficial &nearr;
+                </a>
+                <button type="button" class="btn btn-primary" id="openDemoFromModalBtn">
+                  Solicitar Demonstração deste Software
+                </button>
+              </div>
             </div>
           </div>
 
@@ -685,7 +697,16 @@
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-top: 2rem;">
-        <button type="button" class="btn btn-primary" id="drawerOpenFullModal">
+        <a
+          href="https://anonymizeweb.netlify.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-primary"
+          id="drawerSiteLink"
+        >
+          Acessar Site Oficial do Anonymize &nearr;
+        </a>
+        <button type="button" class="btn btn-neon-outline" id="drawerOpenFullModal" style="border-radius: var(--radius-md); padding: 0.78rem 1.25rem;">
           Abrir Ficha Completa do Anonymize
         </button>
         <button type="button" class="btn btn-glass" id="drawerScrollCatalog">
