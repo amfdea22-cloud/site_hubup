@@ -7,7 +7,7 @@
  */
 
 window.catalogData = {
-  whatsappNumber: "5511999999999",
+  whatsappNumber: "5581997579346",
   contactEmail: "empresa.hubup@gmail.com",
   // Access Key Web3Forms (funciona em localhost e produção)
   web3formsAccessKey: "943e8306-e5a9-4b22-8b33-5649748fbdc7",

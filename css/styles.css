@@ -1642,22 +1642,21 @@ textarea.form-control {
   right: 1.5rem;
   bottom: 1.5rem;
   z-index: var(--z-fab);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.8rem 1.2rem;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
   color: #ffffff;
-  font-weight: 700;
-  font-size: 0.86rem;
-  box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 28px rgba(37, 211, 102, 0.45);
   transition: transform var(--t-fast), box-shadow var(--t-fast);
 }
 
 .fab-whatsapp:hover {
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 16px 38px rgba(16, 185, 129, 0.58);
+  transform: translateY(-3px) scale(1.07);
+  box-shadow: 0 14px 36px rgba(37, 211, 102, 0.65);
 }
 
 .toast {
@@ -1816,12 +1815,11 @@ textarea.form-control {
     right: 3.5rem;
   }
 
-  .fab-whatsapp span {
-    display: none;
-  }
-
   .fab-whatsapp {
-    padding: 0.85rem;
+    width: 54px;
+    height: 54px;
+    right: 1.15rem;
+    bottom: 1.15rem;
   }
 }
 
