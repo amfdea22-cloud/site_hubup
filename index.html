@@ -103,6 +103,23 @@
 
           <button
             type="button"
+            class="user-avatar-btn"
+            id="userAvatarBtn"
+            title="Área do Usuário — Foto e Perfil"
+            aria-label="Abrir Área do Usuário"
+            aria-haspopup="dialog"
+          >
+            <img id="headerAvatarImg" class="user-avatar-img" alt="Foto do usuário" hidden />
+            <span id="headerAvatarFallback" class="user-avatar-fallback" aria-hidden="true">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" stroke-linecap="round" />
+              </svg>
+            </span>
+          </button>
+
+          <button
+            type="button"
             class="mobile-menu-btn"
             id="mobileMenuBtn"
             aria-label="Abrir menu de navegação"
@@ -123,6 +140,13 @@
       <a href="#trilho-ia" class="nav-link">Inteligência Artificial</a>
       <a href="#trilho-engenharia" class="nav-link">Automação &amp; Dados</a>
       <a href="#sobre" class="nav-link">Sobre a <span class="brand-inline">Hub<span class="brand-text-accent">UP!</span></span></a>
+      <button
+        type="button"
+        class="btn btn-glass"
+        id="mobileUserProfileBtn"
+      >
+        Área do Usuário / Foto de Perfil
+      </button>
       <button
         type="button"
         class="btn btn-neon-outline"
@@ -714,6 +738,124 @@
         </button>
       </div>
     </aside>
+
+    <!-- ====================================================================
+         Modal Área do Usuário (Foto de Perfil + Dados Salvos)
+         ==================================================================== -->
+    <div
+      class="modal-backdrop"
+      id="userProfileModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="userProfileTitle"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog user-profile-dialog">
+        <button
+          type="button"
+          class="modal-close"
+          id="userProfileCloseBtn"
+          aria-label="Fechar Área do Usuário"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
+          </svg>
+        </button>
+
+        <div class="user-profile-header">
+          <span class="section-eyebrow" style="margin-bottom: 0.25rem;">PERFIL DO USUÁRIO</span>
+          <h2 id="userProfileTitle" style="font-size: 1.5rem; font-weight: 800;">Área do Usuário</h2>
+          <p style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0.25rem;">
+            Personalize sua foto e dados para preencher demonstrações automaticamente.
+          </p>
+        </div>
+
+        <div class="user-profile-body">
+          <!-- Upload de Foto -->
+          <div class="avatar-upload-zone" id="avatarUploadZone">
+            <div class="avatar-preview-wrap" id="avatarPreviewTrigger" role="button" tabindex="0" aria-label="Selecionar ou alterar foto de perfil">
+              <img id="profileAvatarImg" class="profile-avatar-img" alt="Prévia da foto de perfil" hidden />
+              <div id="profileAvatarPlaceholder" class="profile-avatar-placeholder" aria-hidden="true">
+                <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" stroke-linecap="round" />
+                </svg>
+              </div>
+              <span class="avatar-camera-badge" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+              </span>
+            </div>
+
+            <div class="avatar-upload-controls">
+              <p class="avatar-upload-hint">Arraste uma imagem aqui ou escolha um arquivo (JPG, PNG, WebP)</p>
+              <div class="avatar-btn-row">
+                <button type="button" class="btn btn-neon-outline" id="choosePhotoBtn" style="border-radius: var(--radius-sm); padding: 0.5rem 0.95rem; font-size: 0.82rem;">
+                  Inserir / Alterar Foto
+                </button>
+                <button type="button" class="btn btn-glass" id="removePhotoBtn" style="padding: 0.5rem 0.85rem; font-size: 0.82rem;" hidden>
+                  Remover Foto
+                </button>
+              </div>
+              <input type="file" id="userPhotoInput" accept="image/*" hidden />
+            </div>
+          </div>
+
+          <!-- Dados do Perfil -->
+          <form id="userProfileForm" novalidate>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="profileNameInput">Seu Nome</label>
+                <input
+                  type="text"
+                  id="profileNameInput"
+                  class="form-control"
+                  placeholder="Ex: Ana Silva"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="profileRoleInput">Cargo / Função</label>
+                <input
+                  type="text"
+                  id="profileRoleInput"
+                  class="form-control"
+                  placeholder="Ex: Diretora de TI"
+                />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="profileCompanyInput">Empresa</label>
+                <input
+                  type="text"
+                  id="profileCompanyInput"
+                  class="form-control"
+                  placeholder="Nome da empresa"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="profileEmailInput">E-mail Corporativo</label>
+                <input
+                  type="email"
+                  id="profileEmailInput"
+                  class="form-control"
+                  placeholder="voce@empresa.com.br"
+                />
+              </div>
+            </div>
+
+            <div class="demo-form-actions">
+              <button type="submit" class="btn btn-primary" style="flex: 1;">
+                Salvar Perfil
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <!-- Floating Commercial WhatsApp Button (Ícone Redondo) -->
     <a

@@ -78,6 +78,26 @@
   const hudPreviewArea = document.getElementById("hudPreviewArea");
   const hudFooterMetrics = document.getElementById("hudFooterMetrics");
 
+  // User Profile DOM
+  const userAvatarBtn = document.getElementById("userAvatarBtn");
+  const mobileUserProfileBtn = document.getElementById("mobileUserProfileBtn");
+  const headerAvatarImg = document.getElementById("headerAvatarImg");
+  const headerAvatarFallback = document.getElementById("headerAvatarFallback");
+  const userProfileModal = document.getElementById("userProfileModal");
+  const userProfileCloseBtn = document.getElementById("userProfileCloseBtn");
+  const avatarUploadZone = document.getElementById("avatarUploadZone");
+  const avatarPreviewTrigger = document.getElementById("avatarPreviewTrigger");
+  const profileAvatarImg = document.getElementById("profileAvatarImg");
+  const profileAvatarPlaceholder = document.getElementById("profileAvatarPlaceholder");
+  const choosePhotoBtn = document.getElementById("choosePhotoBtn");
+  const removePhotoBtn = document.getElementById("removePhotoBtn");
+  const userPhotoInput = document.getElementById("userPhotoInput");
+  const userProfileForm = document.getElementById("userProfileForm");
+  const profileNameInput = document.getElementById("profileNameInput");
+  const profileRoleInput = document.getElementById("profileRoleInput");
+  const profileCompanyInput = document.getElementById("profileCompanyInput");
+  const profileEmailInput = document.getElementById("profileEmailInput");
+
   // Footer Form & Toast
   const footerContactForm = document.getElementById("footerContactForm");
   const toast = document.getElementById("toast");
@@ -909,7 +929,9 @@
   // ==========================================================================
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      if (productModal.classList.contains("open")) {
+      if (userProfileModal?.classList.contains("open")) {
+        closeUserProfileModal();
+      } else if (productModal.classList.contains("open")) {
         closeProductModal();
       } else if (specsDrawer.classList.contains("open")) {
         closeSpecsDrawer();
@@ -920,6 +942,211 @@
         clearSearch();
       }
     }
+  });
+
+  // ==========================================================================
+  // Área do Usuário (Foto de Perfil + Dados Persistentes em localStorage)
+  // ==========================================================================
+  const USER_PROFILE_KEY = "hubup_user_profile";
+  const defaultAvatarSvg = `
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" stroke-linecap="round" />
+    </svg>
+  `;
+
+  function loadUserProfile() {
+    try {
+      return JSON.parse(localStorage.getItem(USER_PROFILE_KEY) || "{}") || {};
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function saveUserProfile(profile) {
+    try {
+      localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(profile));
+    } catch (_) {
+      showToast("Não foi possível salvar localmente (armazenamento cheio ou bloqueado).");
+    }
+  }
+
+  function getInitials(name) {
+    const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  function applyUserProfileToUI() {
+    const profile = loadUserProfile();
+    const hasPhoto = Boolean(profile.photo);
+
+    // Header Avatar
+    if (hasPhoto) {
+      headerAvatarImg.src = profile.photo;
+      headerAvatarImg.hidden = false;
+      headerAvatarFallback.hidden = true;
+    } else {
+      headerAvatarImg.removeAttribute("src");
+      headerAvatarImg.hidden = true;
+      headerAvatarFallback.hidden = false;
+      const initials = getInitials(profile.name);
+      headerAvatarFallback.innerHTML = initials ? escapeHtml(initials) : defaultAvatarSvg;
+    }
+
+    // Modal Avatar Preview
+    if (hasPhoto) {
+      profileAvatarImg.src = profile.photo;
+      profileAvatarImg.hidden = false;
+      profileAvatarPlaceholder.hidden = true;
+      removePhotoBtn.hidden = false;
+    } else {
+      profileAvatarImg.removeAttribute("src");
+      profileAvatarImg.hidden = true;
+      profileAvatarPlaceholder.hidden = false;
+      removePhotoBtn.hidden = true;
+    }
+
+    // Preenche inputs do modal de perfil
+    profileNameInput.value = profile.name || "";
+    profileRoleInput.value = profile.role || "";
+    profileCompanyInput.value = profile.company || "";
+    profileEmailInput.value = profile.email || "";
+
+    // Pré-preenche formulários do site se vazios
+    const demoName = document.getElementById("demoNameInput");
+    const demoCompany = document.getElementById("demoCompanyInput");
+    const demoEmail = document.getElementById("demoEmailInput");
+    const footerName = document.getElementById("footerName");
+    const footerEmail = document.getElementById("footerEmail");
+
+    if (profile.name && demoName && !demoName.value) demoName.value = profile.name;
+    if (profile.company && demoCompany && !demoCompany.value) demoCompany.value = profile.company;
+    if (profile.email && demoEmail && !demoEmail.value) demoEmail.value = profile.email;
+    if (profile.name && footerName && !footerName.value) footerName.value = profile.name;
+    if (profile.email && footerEmail && !footerEmail.value) footerEmail.value = profile.email;
+  }
+
+  function processAndSaveAvatarFile(file) {
+    if (!file) return;
+    if (!file.type || !file.type.startsWith("image/")) {
+      showToast("Selecione um arquivo de imagem válido (JPG, PNG ou WebP).");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("A imagem excede 10 MB. Escolha um arquivo menor.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        // Crop central quadrado e redimensiona para 320x320px otimizado
+        const size = 320;
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+
+        const minSide = Math.min(img.width, img.height);
+        const sx = (img.width - minSide) / 2;
+        const sy = (img.height - minSide) / 2;
+        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.86);
+        const profile = loadUserProfile();
+        profile.photo = dataUrl;
+        saveUserProfile(profile);
+        applyUserProfileToUI();
+        showToast("Foto de perfil atualizada com sucesso!");
+      };
+      img.onerror = () => showToast("Não foi possível carregar esta imagem.");
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function openUserProfileModal() {
+    closeSpecsDrawer();
+    mobileNav.classList.remove("open");
+    mobileMenuBtn.setAttribute("aria-expanded", "false");
+    applyUserProfileToUI();
+    userProfileModal.classList.add("open");
+    userProfileModal.setAttribute("aria-hidden", "false");
+    lockScroll(true);
+  }
+
+  function closeUserProfileModal() {
+    userProfileModal.classList.remove("open");
+    userProfileModal.setAttribute("aria-hidden", "true");
+    if (!productModal.classList.contains("open") && !specsDrawer.classList.contains("open")) {
+      lockScroll(false);
+    }
+  }
+
+  userAvatarBtn?.addEventListener("click", openUserProfileModal);
+  mobileUserProfileBtn?.addEventListener("click", openUserProfileModal);
+  userProfileCloseBtn?.addEventListener("click", closeUserProfileModal);
+  userProfileModal?.addEventListener("click", (e) => {
+    if (e.target === userProfileModal) closeUserProfileModal();
+  });
+
+  choosePhotoBtn?.addEventListener("click", () => userPhotoInput.click());
+  avatarPreviewTrigger?.addEventListener("click", () => userPhotoInput.click());
+  avatarPreviewTrigger?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      userPhotoInput.click();
+    }
+  });
+
+  userPhotoInput?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (file) processAndSaveAvatarFile(file);
+    userPhotoInput.value = "";
+  });
+
+  removePhotoBtn?.addEventListener("click", () => {
+    const profile = loadUserProfile();
+    delete profile.photo;
+    saveUserProfile(profile);
+    applyUserProfileToUI();
+    showToast("Foto de perfil removida.");
+  });
+
+  // Drag & Drop de imagem sobre a zona de avatar
+  ["dragenter", "dragover"].forEach((evt) => {
+    avatarUploadZone?.addEventListener(evt, (e) => {
+      e.preventDefault();
+      avatarUploadZone.classList.add("drag-over");
+    });
+  });
+
+  ["dragleave", "drop"].forEach((evt) => {
+    avatarUploadZone?.addEventListener(evt, (e) => {
+      e.preventDefault();
+      avatarUploadZone.classList.remove("drag-over");
+    });
+  });
+
+  avatarUploadZone?.addEventListener("drop", (e) => {
+    const file = e.dataTransfer?.files?.[0];
+    if (file) processAndSaveAvatarFile(file);
+  });
+
+  userProfileForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const profile = loadUserProfile();
+    profile.name = profileNameInput.value.trim();
+    profile.role = profileRoleInput.value.trim();
+    profile.company = profileCompanyInput.value.trim();
+    profile.email = profileEmailInput.value.trim();
+    saveUserProfile(profile);
+    applyUserProfileToUI();
+    closeUserProfileModal();
+    showToast("Perfil salvo com sucesso!");
   });
 
   // ==========================================================================
@@ -991,6 +1218,7 @@
 
   // Initialize
   renderCatalogRails();
+  applyUserProfileToUI();
   const initialProduct = getProductById(activeHeroProductId);
   if (initialProduct) {
     renderHeroContent(initialProduct);
